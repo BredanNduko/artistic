@@ -1,0 +1,119 @@
+[
+ {
+  "id": "instagram-post",
+  "label": "Instagram Post",
+  "width": 1080,
+  "height": 1080,
+  "group": "social",
+  "hint": "Square feed post"
+ },
+ {
+  "id": "instagram-story",
+  "label": "Instagram Story",
+  "width": 1080,
+  "height": 1920,
+  "group": "social",
+  "hint": "Full-screen vertical"
+ },
+ {
+  "id": "facebook-post",
+  "label": "Facebook Post",
+  "width": 1200,
+  "height": 630,
+  "group": "social",
+  "hint": "Link preview ratio"
+ },
+ {
+  "id": "youtube-thumbnail",
+  "label": "YouTube Thumbnail",
+  "width": 1280,
+  "height": 720,
+  "group": "video",
+  "hint": "16:9 thumbnail"
+ },
+ {
+  "id": "twitter-post",
+  "label": "X / Twitter Post",
+  "width": 1600,
+  "height": 900,
+  "group": "social",
+  "hint": "Timeline image"
+ },
+ {
+  "id": "linkedin-post",
+  "label": "LinkedIn Post",
+  "width": 1200,
+  "height": 1200,
+  "group": "social",
+  "hint": "Square professional"
+ },
+ {
+  "id": "pinterest-pin",
+  "label": "Pinterest Pin",
+  "width": 1000,
+  "height": 1500,
+  "group": "social",
+  "hint": "2:3 vertical"
+ },
+ {
+  "id": "poster-a3",
+  "label": "Poster A3",
+  "width": 3508,
+  "height": 4961,
+  "group": "print",
+  "hint": "297 × 420 mm",
+  "dpi": 300
+ },
+ {
+  "id": "poster-a4",
+  "label": "A4",
+  "width": 2480,
+  "height": 3508,
+  "group": "print",
+  "hint": "210 × 297 mm",
+  "dpi": 300
+ },
+ {
+  "id": "flyer-a5",
+  "label": "Flyer A5",
+  "width": 1748,
+  "height": 2480,
+  "group": "print",
+  "hint": "148 × 210 mm",
+  "dpi": 300
+ },
+ {
+  "id": "business-card",
+  "label": "Business Card",
+  "width": 1050,
+  "height": 600,
+  "group": "print",
+  "hint": "89 × 51 mm",
+  "dpi": 300
+ },
+ {
+  "id": "presentation-16-9",
+  "label": "Presentation",
+  "width": 1920,
+  "height": 1080,
+  "group": "web",
+  "hint": "16:9 slide"
+ },
+ {
+  "id": "certificate",
+  "label": "Certificate",
+  "width": 2480,
+  "height": 3508,
+  "group": "print",
+  "hint": "A4 landscape print",
+  "dpi": 300
+ },
+ {
+  "id": "custom",
+  "label": "Custom size",
+  "width": 1080,
+  "height": 1080,
+  "group": "web",
+  "hint": "Set your own dimensions"
+ }
+]
