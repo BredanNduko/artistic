@@ -137,12 +137,14 @@ def _guard_size(doc: dict) -> None:
 @router.get("/status")
 def status(user: User | None = Depends(current_user_optional)):
     s = get_settings()
-    ok = bool(s.anthropic_api_key)
+    ok = bool(s.provider_api_key())
     return {
         "available": ok,
         "mode": "connected" if ok else "local-preview",
-        "provider": "anthropic" if ok else None,
-        "message": "Generation is handled by the configured backend provider." if ok else "AI is not configured on this server.",
+        "provider": s.ai_provider if ok else None,
+        "model": s.model_for("main") if ok else None,
+        "fastModel": s.model_for("fast") if ok else None,
+        "message": f"Generation is handled by {s.ai_provider}." if ok else "AI is not configured on this server.",
     }
 
 
@@ -169,7 +171,7 @@ def generate_design(
         kit = row.data if row else None
 
     result = _run(
-        db, user, provider, endpoint="generate", model=get_settings().ai_model,
+        db, user, provider, endpoint="generate", model=get_settings().model_for("main"),
         system=prompts.generate_system(width, height),
         message=prompts.generate_user(body.prompt, _hex_colors(body.colors), kit),
         tool=tools.CREATE_DESIGN, max_tokens=8000,
@@ -203,7 +205,7 @@ def modify_design(
     doc = _flat(body.design)
     _guard_size(doc)
     result = _run(
-        db, user, provider, endpoint="modify", model=get_settings().ai_model,
+        db, user, provider, endpoint="modify", model=get_settings().model_for("main"),
         system=prompts.EDIT_SYSTEM,
         message=prompts.edit_user(summarize_design(doc), body.instruction),
         tool=tools.EDIT_DESIGN, max_tokens=6000,
@@ -233,7 +235,7 @@ def copy_text(
     provider: AIProvider = Depends(get_provider),
 ):
     result = _run(
-        db, user, provider, endpoint="copy", model=get_settings().ai_fast_model,
+        db, user, provider, endpoint="copy", model=get_settings().model_for("fast"),
         system=prompts.COPY_SYSTEM, message=prompts.copy_user(body.prompt, body.kind, body.tone, body.count),
         tool=tools.SUBMIT_COPY, max_tokens=1500,
     )
@@ -259,7 +261,7 @@ def suggest(
     doc = _flat(body.design)
     _guard_size(doc)
     result = _run(
-        db, user, provider, endpoint="suggest", model=get_settings().ai_fast_model,
+        db, user, provider, endpoint="suggest", model=get_settings().model_for("fast"),
         system=prompts.SUGGEST_SYSTEM, message=prompts.suggest_user(summarize_design(doc)),
         tool=tools.SUBMIT_SUGGESTIONS, max_tokens=2000,
     )
@@ -291,7 +293,7 @@ def generate_image(
     response shape; the frontend only needs {src, width, height}."""
     width, height = body.width or 1024, body.height or 1024
     result = _run(
-        db, user, provider, endpoint="image", model=get_settings().ai_model,
+        db, user, provider, endpoint="image", model=get_settings().model_for("main"),
         system=prompts.image_system(width, height), message=prompts.image_user(body.prompt, _hex_colors(body.colors)),
         tool=tools.SUBMIT_SVG, max_tokens=8000,
     )
