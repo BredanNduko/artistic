@@ -40,6 +40,10 @@ class Settings(BaseSettings):
     max_brand_kits_per_user: int = 20
 
     # AI
+    ai_provider: Literal["gemini", "anthropic"] = "gemini"
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-3.5-flash"
+    gemini_fast_model: str = "gemini-3.1-flash-lite"
     anthropic_api_key: str | None = None
     ai_model: str = "claude-sonnet-5-5"
     ai_fast_model: str = "claude-haiku-4-5-20251001"
@@ -47,7 +51,18 @@ class Settings(BaseSettings):
     ai_per_minute_limit: int = Field(10, ge=1)
     ai_timeout_seconds: float = 90.0
 
-    @field_validator("anthropic_api_key", mode="before")
+    def provider_api_key(self) -> str | None:
+        """The key for the *active* provider, so callers never branch on it."""
+        return self.gemini_api_key if self.ai_provider == "gemini" else self.anthropic_api_key
+
+    def model_for(self, tier: Literal["main", "fast"]) -> str:
+        """Model id for the active provider. Ids are not portable across
+        providers, so this must never be bypassed with ai_model directly."""
+        if self.ai_provider == "gemini":
+            return self.gemini_model if tier == "main" else self.gemini_fast_model
+        return self.ai_model if tier == "main" else self.ai_fast_model
+
+    @field_validator("anthropic_api_key", "gemini_api_key", mode="before")
     @classmethod
     def _clean_api_key(cls, value):
         # A pasted key often carries stray whitespace or quotes. Left in place it
