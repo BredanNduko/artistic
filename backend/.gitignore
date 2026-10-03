@@ -1,0 +1,8 @@
+.env
+# Runtime database and uploads only. Anchored so app/data/*.json (the
+# template catalogue) stays tracked.
+/data/
+__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
