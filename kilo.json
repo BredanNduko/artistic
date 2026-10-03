@@ -5,7 +5,7 @@
       "git push --force*": "deny",
       "git push -f*": "deny",
       "git push --delete*": "deny",
-      "git reset --hard*": "deny",
+      "git reset*": "deny",
       "git clean*": "deny",
       "git checkout -- *": "deny",
       "git restore*": "deny",
