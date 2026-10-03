@@ -1,0 +1,161 @@
+[
+ {
+  "family": "Inter",
+  "category": "sans",
+  "weights": [
+   300,
+   400,
+   500,
+   600,
+   700,
+   800
+  ],
+  "note": "Neutral UI workhorse",
+  "fallback": "system-ui, sans-serif"
+ },
+ {
+  "family": "Poppins",
+  "category": "sans",
+  "weights": [
+   300,
+   400,
+   500,
+   600,
+   700,
+   800
+  ],
+  "note": "Geometric, friendly",
+  "fallback": "system-ui, sans-serif"
+ },
+ {
+  "family": "Montserrat",
+  "category": "sans",
+  "weights": [
+   300,
+   400,
+   500,
+   600,
+   700,
+   800,
+   900
+  ],
+  "note": "Corporate & clean",
+  "fallback": "system-ui, sans-serif"
+ },
+ {
+  "family": "Space Grotesk",
+  "category": "sans",
+  "weights": [
+   300,
+   400,
+   500,
+   600,
+   700
+  ],
+  "note": "Technical, modern",
+  "fallback": "system-ui, sans-serif"
+ },
+ {
+  "family": "Archivo Black",
+  "category": "display",
+  "weights": [
+   400
+  ],
+  "note": "Heavy poster headline",
+  "fallback": "Impact, sans-serif"
+ },
+ {
+  "family": "Bebas Neue",
+  "category": "display",
+  "weights": [
+   400
+  ],
+  "note": "Condensed caps",
+  "fallback": "Impact, sans-serif"
+ },
+ {
+  "family": "Oswald",
+  "category": "display",
+  "weights": [
+   300,
+   400,
+   500,
+   600,
+   700
+  ],
+  "note": "Tall condensed",
+  "fallback": "Impact, sans-serif"
+ },
+ {
+  "family": "Playfair Display",
+  "category": "serif",
+  "weights": [
+   400,
+   500,
+   600,
+   700,
+   800,
+   900
+  ],
+  "note": "Elegant editorial",
+  "fallback": "Georgia, serif"
+ },
+ {
+  "family": "DM Serif Display",
+  "category": "serif",
+  "weights": [
+   400
+  ],
+  "note": "High-contrast serif",
+  "fallback": "Georgia, serif"
+ },
+ {
+  "family": "Lora",
+  "category": "serif",
+  "weights": [
+   400,
+   500,
+   600,
+   700
+  ],
+  "note": "Readable serif body",
+  "fallback": "Georgia, serif"
+ },
+ {
+  "family": "Cormorant Garamond",
+  "category": "serif",
+  "weights": [
+   300,
+   400,
+   500,
+   600,
+   700
+  ],
+  "note": "Wedding & luxury",
+  "fallback": "Georgia, serif"
+ },
+ {
+  "family": "Caveat",
+  "category": "handwriting",
+  "weights": [
+   400,
+   500,
+   600,
+   700
+  ],
+  "note": "Casual script accent",
+  "fallback": "cursive"
+ },
+ {
+  "family": "IBM Plex Mono",
+  "category": "mono",
+  "weights": [
+   300,
+   400,
+   500,
+   600
+  ],
+  "note": "Data & code labels",
+  "fallback": "ui-monospace, monospace"
+ }
+]
