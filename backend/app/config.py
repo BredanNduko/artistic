@@ -47,6 +47,16 @@ class Settings(BaseSettings):
     ai_per_minute_limit: int = Field(10, ge=1)
     ai_timeout_seconds: float = 90.0
 
+    @field_validator("anthropic_api_key", mode="before")
+    @classmethod
+    def _clean_api_key(cls, value):
+        # A pasted key often carries stray whitespace or quotes. Left in place it
+        # passes the "is AI configured" check and then fails at the provider as a
+        # confusing 502, so trim here and treat a blank value as "not configured".
+        if isinstance(value, str):
+            return value.strip().strip('"').strip("'").strip() or None
+        return value
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_origins(cls, value):
