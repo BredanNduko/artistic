@@ -1,0 +1,185 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens.
+ *
+ * Values live in :root so the `dark` class can swap them at runtime, while
+ * Tailwind still generates real utilities (bg-surface, text-ink, border-line…)
+ * from the `@theme inline` mapping below.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --canvas: #f1f2f5;
+  --surface: #ffffff;
+  --surface-2: #f8f9fb;
+  --surface-3: #eef0f4;
+  --line: #e3e6ec;
+  --line-strong: #cdd2dc;
+  --ink: #0c0e13;
+  --ink-soft: #4c5361;
+  --ink-muted: #8b93a3;
+  --brand: #4f46e5;
+  --brand-ink: #ffffff;
+  --brand-soft: #eef0ff;
+  --brand-ring: #b9b7f8;
+  --accent: #f59e0b;
+  --danger: #dc2626;
+  --success: #16a34a;
+}
+
+.dark {
+  --canvas: #0b0c10;
+  --surface: #15171d;
+  --surface-2: #1b1e26;
+  --surface-3: #232733;
+  --line: #282c37;
+  --line-strong: #3a3f4d;
+  --ink: #f2f4f8;
+  --ink-soft: #a9b1c1;
+  --ink-muted: #737b8c;
+  --brand: #7c7cf8;
+  --brand-ink: #0b0c10;
+  --brand-soft: #1e2033;
+  --brand-ring: #4a49a8;
+  --accent: #fbbf24;
+  --danger: #f87171;
+  --success: #4ade80;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-muted: var(--ink-muted);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-ring: var(--brand-ring);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Archivo Black', 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --radius-panel: 10px;
+
+  --shadow-panel: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px -8px rgb(0 0 0 / 0.12);
+  --shadow-float: 0 8px 32px -12px rgb(0 0 0 / 0.28);
+
+  --animate-fade-in: fade-in 0.18s ease-out;
+  --animate-rise: rise 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--brand) 26%, transparent);
+  }
+
+  /* Slim, unobtrusive scrollbars — the editor is dense with panels. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  input[type='color'] {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type='color']::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+
+  input[type='color']::-webkit-color-swatch {
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+  }
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Checkerboard used behind transparent designs in the editor. */
+@utility checkerboard {
+  background-image:
+    linear-gradient(45deg, var(--surface-3) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--surface-3) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--surface-3) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--surface-3) 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0px;
+}
