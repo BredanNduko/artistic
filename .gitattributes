@@ -1,0 +1,19 @@
+# Normalise text files to LF in the repository and in checkouts, so the Windows
+# dev environment and the Linux CI runners agree on file contents.
+* text=auto eol=lf
+
+# Binary assets must never be line-ending translated.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.db binary
+*.db-wal binary
+*.db-shm binary
+
+# Lockfiles and generated bundles stay as-is.
+frontend/package-lock.json -diff linguist-generated=true
