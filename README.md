@@ -11,14 +11,14 @@ Two pieces:
 | `backend/` | Python FastAPI API — auth, storage, database, AI proxy | http://localhost:8000 |
 
 ```
-Browser ──▶ frontend (Vite, :5173) ──▶ backend (FastAPI, :8000) ──▶ Anthropic API
+Browser ──▶ frontend (Vite, :5173) ──▶ backend (FastAPI, :8000) ──▶ Gemini API
                     │                       │                            ▲
                     └── localStorage         ├── SQLite (users, designs)  │ API key stays
                        (offline mode)        └── disk (uploads)           │ server-side
 ```
 
-**The API key never reaches the browser.** The frontend calls your backend, the backend calls
-Anthropic. That is the whole reason the AI lives on the server.
+**The API key never reaches the browser.** The frontend calls your backend, the backend calls the
+model provider. That is the whole reason the AI lives on the server.
 
 ---
 
@@ -91,56 +91,68 @@ top right. Accounts live in `backend/data/designforge.db`; delete that file to r
 
 ## Turning on the AI
 
-The AI is **off until you add an API key**. It is one variable.
+The AI is **off until you add a provider key**. It is one variable.
 
-### Get a key
+### 1. Get a Gemini key
 
-Create one at https://console.anthropic.com/settings/keys
+Create one at https://aistudio.google.com/apikey → **Create API key**.
 
-### Add it to the backend
+### 2. Add it to the backend
 
 Edit `backend/.env`:
 
 ```
-ANTHROPIC_API_KEY=sk-ant-...
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your-key-here
 ```
 
-Restart the backend (`Ctrl+C`, then `uvicorn app.main:app --reload`). That is the whole setup.
+`AI_PROVIDER` defaults to `gemini`, so setting the key is usually enough. Restart the backend
+(`Ctrl+C`, then `uvicorn app.main:app --reload`) — `--reload` does not watch `.env`.
 
-### Confirm it is on
+### 3. Confirm it is on
 
 ```bash
 curl http://localhost:8000/ai/status
 ```
 
 ```json
-{ "available": true, "mode": "connected", "provider": "anthropic" }
+{
+  "available": true,
+  "mode": "connected",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash",
+  "fastModel": "gemini-3.1-flash-lite"
+}
 ```
 
-`"available": false` means the key is missing or empty. In the browser, open **AI Studio** —
-the badge in its header should read **Provider connected** instead of **Local engine**.
+In the browser, open **AI Studio** — the badge in its header should read **Provider connected**
+instead of **Local engine**.
 
 ### Choosing models
 
-Defaults in `backend/.env`, both current model IDs:
-
 | Variable | Default | Used for |
 |---|---|---|
-| `AI_MODEL` | `claude-sonnet-5-5` | Design generation, edits, artwork |
-| `AI_FAST_MODEL` | `claude-haiku-4-5-20251001` | Copywriting, design review notes |
+| `GEMINI_MODEL` | `gemini-3.5-flash` | Design generation, edits, artwork |
+| `GEMINI_FAST_MODEL` | `gemini-3.1-flash-lite` | Copywriting, design review notes |
 
-The fast model handles the short, frequent calls; the large model handles anything that returns a
-whole design. Override either if you want to trade cost against quality.
+Both defaults are **stable** models. Google's preview ids get withdrawn without warning —
+`gemini-3-pro-preview` was shut down in March 2026 — so prefer stable ids.
+
+### Prefer Anthropic instead?
+
+Set `AI_PROVIDER=anthropic` and use `ANTHROPIC_API_KEY`, `AI_MODEL`, `AI_FAST_MODEL`. Both
+providers sit behind the same interface, so prompts, tool schemas and output validation are
+identical — only the key and model ids change.
 
 ### What each AI feature calls
 
 | Feature | Endpoint | Model |
 |---|---|---|
-| Generate a design from a prompt | `POST /ai/generate-design` | `AI_MODEL` |
-| Edit a design by instruction | `POST /ai/modify-design` | `AI_MODEL` |
-| Generate artwork | `POST /ai/image` | `AI_MODEL` |
-| Write headlines, CTAs, captions | `POST /ai/copy` | `AI_FAST_MODEL` |
-| Review a design | `POST /ai/suggest` | `AI_FAST_MODEL` |
+| Generate a design from a prompt | `POST /ai/generate-design` | main |
+| Edit a design by instruction | `POST /ai/modify-design` | main |
+| Generate artwork | `POST /ai/image` | main |
+| Write headlines, CTAs, captions | `POST /ai/copy` | fast |
+| Review a design | `POST /ai/suggest` | fast |
 | Reflow to another format | `POST /ai/resize-design` | **none** — pure geometry |
 
 Reflow is deterministic on purpose: it costs nothing, needs no key, and cannot hallucinate a
@@ -162,7 +174,7 @@ is logged with token counts in the `ai_usage` table.
 
 ## Verifying the whole thing
 
-**Backend tests** — 55 tests, no API key and no network needed:
+**Backend tests** — 97 tests, no API key and no network needed:
 
 ```bash
 cd backend
@@ -219,7 +231,11 @@ Local dev is same-site (`localhost:5173` → `localhost:8000`), so `lax` + insec
 
 | Variable | Default |
 |---|---|
-| `ANTHROPIC_API_KEY` | empty — **AI is off without this** |
+| `AI_PROVIDER` | `gemini` (or `anthropic`) |
+| `GEMINI_API_KEY` | empty — **AI is off without this** |
+| `GEMINI_MODEL` | `gemini-3.5-flash` |
+| `GEMINI_FAST_MODEL` | `gemini-3.1-flash-lite` |
+| `ANTHROPIC_API_KEY` | only used when `AI_PROVIDER=anthropic` |
 | `AI_MODEL` | `claude-sonnet-5-5` |
 | `AI_FAST_MODEL` | `claude-haiku-4-5-20251001` |
 | `AI_DAILY_LIMIT` | `100` |
@@ -276,7 +292,7 @@ SQLite wants one writer and the rate limiter is in memory.
 ## Troubleshooting
 
 **`/ai/status` says `available: false`**
-`ANTHROPIC_API_KEY` is empty or missing. Check `backend/.env` — not the frontend one — and
+`GEMINI_API_KEY` is empty or missing. Check `backend/.env` — not the frontend one — and
 restart the backend. Uvicorn does not hot-reload `.env`.
 
 **AI works in the terminal but not in the browser**
@@ -293,7 +309,10 @@ You reached the backend, but it has no key. See above.
 You hit `AI_PER_MINUTE_LIMIT`. Wait, or raise the limit.
 
 **AI returns `502 The AI service is not configured correctly`**
-The key was rejected. Verify it at https://console.anthropic.com/settings/keys
+The key was rejected. Verify it at https://aistudio.google.com/apikey
+
+**AI returns `422 The AI declined that request`**
+Gemini blocked the prompt on safety grounds. Rephrase it.
 
 **Designs disappeared**
 They were saved to browser `localStorage` and are not in the database. They only leave the
@@ -321,9 +340,9 @@ backend/
     security.py        Argon2 hashing, JWT sessions
     deps.py            request dependencies, auth guard
     routers/           auth, projects, assets, files, brand_kits, templates, ai
-    ai/                provider, prompts, tool schemas, output validation
+    ai/                provider (Gemini or Anthropic), prompts, tool schemas, output validation
     data/*.json        template, format, font and category catalogues
-  tests/               55 tests
+  tests/               97 tests
   smoke_test.py        end-to-end check against a live server
 
 frontend/
