@@ -1,6 +1,7 @@
 import re
 
 from app.ai.provider import AIProviderError
+from app.config import get_settings
 from tests.conftest import make_design
 
 
@@ -152,7 +153,7 @@ def test_copy_dedupes_trims_and_uses_the_fast_model(client, user, fake_ai):
     v = r.json()
     assert v["kind"] == "cta" and v["variants"][:2] == ["Join us", "Come along"] and len(v["variants"]) == 3
     assert max(map(len, v["variants"])) <= 60  # cta length cap x2
-    assert fake_ai.calls[0]["model"] == "claude-haiku-4-5-20251001"
+    assert fake_ai.calls[0]["model"] == get_settings().model_for("fast")
     assert client.post("/ai/copy", json={"prompt": "x", "kind": "tweet"}).status_code == 422
 
 

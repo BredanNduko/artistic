@@ -9,6 +9,8 @@ os.environ.update(
     DATABASE_URL=f"sqlite:///{_TMP}/test.db",
     UPLOAD_DIR=str(_TMP / "uploads"),
     PUBLIC_BASE_URL="http://testserver",
+    AI_PROVIDER="gemini",
+    GEMINI_API_KEY="",
     ANTHROPIC_API_KEY="",
 )
 
