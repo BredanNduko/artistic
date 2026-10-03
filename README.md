@@ -1,4 +1,4 @@
-
+# DesignForge (full stack)
 
 - `frontend/` — your React app, lightly patched to work with the backend (password sign-in, session cookie on uploads, AI routed to the backend).
 - `backend/`  — Python FastAPI API. See `backend/README.md`.
